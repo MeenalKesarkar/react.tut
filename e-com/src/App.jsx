@@ -9,7 +9,7 @@ import { useEffect, useState } from 'react';
 function App() {
   const [cart, setCart] = useState([]);
   useEffect(() =>{
-    axios.get('/api/cart-items')
+    axios.get('/api/cart-items?expand=product')
         .then((response) => {
             console.log(response.data);
     })
