@@ -7,6 +7,7 @@ import './Checkoutpage.css';
 
 export const CheckoutPage = ({ cart }) => {
   const [deliveryOptions, setDeliveryOptions] = useState([]);
+  const [paymentSummary, setPaymentSummary] = useState(null);
 
   useEffect(() => {
     axios
@@ -17,13 +18,18 @@ export const CheckoutPage = ({ cart }) => {
       .catch((error) => {
         console.error('Error fetching delivery options:', error);
       });
+
+      axios.get('/api/payment-summary')
+      .then((response) => {
+        setPaymentSummary(response.data);
+      });
   }, []);
 
   return (
     <>
       <title>Checkout</title>
 
-      {/* HEADER */}
+     
       <div className="checkout-header">
         <div className="header-content">
           <div className="checkout-header-left-section">
@@ -54,13 +60,13 @@ export const CheckoutPage = ({ cart }) => {
         </div>
       </div>
 
-      {/* PAGE */}
+     
       <div className="checkout-page">
         <div className="page-title">Review your order</div>
 
         <div className="checkout-grid">
           
-          {/* ORDER SUMMARY */}
+       
           <div className="order-summary">
             {deliveryOptions.length > 0 &&
               cart.map((cartItem) => {
@@ -119,7 +125,7 @@ export const CheckoutPage = ({ cart }) => {
                         </div>
                       </div>
 
-                      {/* DELIVERY OPTIONS */}
+                     
                       <div className="delivery-options">
                         <div className="delivery-options-title">
                           Choose a delivery option:
@@ -171,40 +177,56 @@ export const CheckoutPage = ({ cart }) => {
               })}
           </div>
 
-          {/* PAYMENT SUMMARY */}
+       
           <div className="payment-summary">
             <div className="payment-summary-title">
               Payment Summary
             </div>
 
-            <div className="payment-summary-row">
-              <div>Items ({cart.length}):</div>
-              <div className="payment-summary-money">--</div>
+            {paymentSummary && (
+              <>
+                <div className="payment-summary-row">
+              <div>Items ({paymentSummary.totalItems}):</div>
+              <div className="payment-summary-money">
+                {formatMoney(paymentSummary.productCostCents)}
+              </div>
             </div>
 
             <div className="payment-summary-row">
               <div>Shipping &amp; handling:</div>
-              <div className="payment-summary-money">--</div>
+              <div className="payment-summary-money">
+                {formatMoney(paymentSummary.shippingCostCents)}
+              </div>
             </div>
 
             <div className="payment-summary-row subtotal-row">
               <div>Total before tax:</div>
-              <div className="payment-summary-money">--</div>
+              <div className="payment-summary-money">
+                {formatMoney(paymentSummary.totalCostBeforeTaxCents)}
+              </div>
             </div>
 
             <div className="payment-summary-row">
               <div>Estimated tax (10%):</div>
-              <div className="payment-summary-money">--</div>
+              <div className="payment-summary-money">
+                {formatMoney(paymentSummary.taxCents)}
+              </div>
             </div>
 
             <div className="payment-summary-row total-row">
               <div>Order total:</div>
-              <div className="payment-summary-money">--</div>
+              <div className="payment-summary-money">
+                {formatMoney(paymentSummary.totalCostCents)}
+              </div>
             </div>
 
             <button className="place-order-button button-primary">
               Place your order
             </button>
+            </>
+            )}
+
+            
           </div>
         </div>
       </div>
