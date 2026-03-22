@@ -1,31 +1,25 @@
-import React from 'react'
-import { useEffect, useState } from 'react';
-import axios from 'axios';
-import { Header } from '../../components/Header'
-import { ProductsGrid } from './ProductsGrid';
-import './HomePage.css'
+import { useEffect, useState } from "react";
+import axios from "axios";
+import { ProductsGrid } from "../Home/ProductsGrid";
 
-export const HomePage = ({ cart }) => {
+export const HomePage = () => {
+
     const [products, setProducts] = useState([]);
 
     useEffect(() => {
-        axios.get('/api/products')
-        .then((response) => {
-        setProducts(response.data);
-        });
+        axios.get('/api/cart-items')
+            .then((res) => {
+                setProducts(res.data);   // ✅ IMPORTANT
+            })
+            .catch((err) => {
+                console.error(err);
+            });
     }, []);
-    
-    
+
     return (
-        <>
-            <title>Ecommerce Project</title>
-            <Header cart={cart} />
-
-            <div className="home-page">
-                <ProductsGrid products={products}/>
-            </div>
-        </>
-    )
-}
-
-export default HomePage
+        <div>
+            <h1>Products</h1>
+            <ProductsGrid products={products} />
+        </div>
+    );
+};

@@ -1,8 +1,15 @@
 import { formatMoney } from "../../utils/money";
-export function ProductsGrid({products}) {
-    return(
-         <div className="products-grid">
-        
+
+export function ProductsGrid({ products }) {
+
+    // ✅ Prevent crash if products is not ready
+    if (!Array.isArray(products)) {
+        return <p>Loading products...</p>;
+    }
+
+    return (
+        <div className="products-grid">
+
             {products.map((product) => {
                 return (
                     <div key={product.id} className="product-container">
@@ -36,16 +43,11 @@ export function ProductsGrid({products}) {
 
                         <div className="product-quantity-container">
                             <select>
-                                <option value="1">1</option>
-                                <option value="2">2</option>
-                                <option value="3">3</option>
-                                <option value="4">4</option>
-                                <option value="5">5</option>
-                                <option value="6">6</option>
-                                <option value="7">7</option>
-                                <option value="8">8</option>
-                                <option value="9">9</option>
-                                <option value="10">10</option>
+                                {[...Array(10)].map((_, i) => (
+                                    <option key={i + 1} value={i + 1}>
+                                        {i + 1}
+                                    </option>
+                                ))}
                             </select>
                         </div>
 
@@ -61,7 +63,7 @@ export function ProductsGrid({products}) {
                         </button>
 
                     </div>
-                )
+                );
             })}
 
         </div>
