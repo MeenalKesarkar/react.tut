@@ -7,9 +7,8 @@ export const HomePage = () => {
     const [products, setProducts] = useState([]);
 
     useEffect(() => {
-        axios.get('/api/cart-items')
-            .then((res) => {
-                setProducts(res.data);   // ✅ IMPORTANT
+                axios.get('https://e-commerce-fy7i.vercel.app/api/cart-items').then((res) => {
+                setProducts(res.data);   
             })
             .catch((err) => {
                 console.error(err);
