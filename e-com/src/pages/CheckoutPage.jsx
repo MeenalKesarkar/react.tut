@@ -3,7 +3,7 @@ import axios from 'axios';
 import dayjs from 'dayjs';
 import { formatMoney } from '../utils/money';
 import './checkout-header.css';
-import './Checkoutpage.css';
+import './CheckoutPage.css';
 
 export const CheckoutPage = ({ cart }) => {
   const [deliveryOptions, setDeliveryOptions] = useState([]);
