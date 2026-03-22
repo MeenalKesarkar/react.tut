@@ -1,80 +1,36 @@
-import axios from 'axios';
-import { useState, useEffect } from 'react';
-import { OrderSummary } from './OrderSummary';
-import { PaymentSummary } from './PaymentSummary';
-import './checkout-header.css';
-import './CheckoutPage.css';
+import dayjs from 'dayjs';
+import { formatMoney } from '../../utils/money';
 
-export function CheckoutPage({ cart, setCart }) {   // ✅ UPDATED
-
-  const [deliveryOptions, setDeliveryOptions] = useState([]);
-  const [paymentSummary, setPaymentSummary] = useState(null);
-
-  useEffect(() => {
-
-    const fetchCheckoutData = async () => {
-      try {
-        const deliveryRes = await axios.get('/api/delivery-options');
-        setDeliveryOptions(deliveryRes.data);
-
-        const paymentRes = await axios.get('/api/payment-summary');
-        setPaymentSummary(paymentRes.data);
-
-      } catch (error) {
-        console.error("Checkout error:", error);
-      }
-    };
-
-    fetchCheckoutData();
-
-  }, []);
-
+export function DeliveryOptions({ cartItem, deliveryOptions }) {
   return (
-    <>
-      <title>Checkout</title>
-
-      <div className="checkout-header">
-        <div className="header-content">
-
-          <div className="checkout-header-left-section">
-            <a href="/">
-              <img className="logo" src="/images/logo.png" />
-              <img className="mobile-logo" src="/images/mobile-logo.png" />
-            </a>
-          </div>
-
-          <div className="checkout-header-middle-section">
-            Checkout (
-              <a className="return-to-home-link" href="/">
-                {cart.length} items
-              </a>
-            )
-          </div>
-
-          <div className="checkout-header-right-section">
-            <img src="/images/icons/checkout-lock-icon.png" />
-          </div>
-
-        </div>
+    <div className="delivery-options">
+      <div className="delivery-options-title">
+        Choose a delivery option:
       </div>
+      {deliveryOptions.map((deliveryOption) => {
+        let priceString = 'FREE Shipping';
 
-      <div className="checkout-page">
-        <div className="page-title">Review your order</div>
+        if (deliveryOption.priceCents > 0) {
+          priceString = `${formatMoney(deliveryOption.priceCents)} - Shipping`;
+        }
 
-        <div className="checkout-grid">
-
-          <OrderSummary 
-            cart={cart} 
-            setCart={setCart}   // ✅ ADDED
-            deliveryOptions={deliveryOptions} 
-          />
-
-          <PaymentSummary 
-            paymentSummary={paymentSummary} 
-          />
-
-        </div>
-      </div>
-    </>
+        return (
+          <div key={deliveryOption.id} className="delivery-option">
+            <input type="radio"
+              checked={deliveryOption.id === cartItem.deliveryOptionId}
+              className="delivery-option-input"
+              name={`delivery-option-${cartItem.productId}`} />
+            <div>
+              <div className="delivery-option-date">
+                {dayjs(deliveryOption.estimatedDeliveryTimeMs).format('dddd, MMMM D')}
+              </div>
+              <div className="delivery-option-price">
+                {priceString}
+              </div>
+            </div>
+          </div>
+        );
+      })}
+    </div>
   );
 }
